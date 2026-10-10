@@ -1,0 +1,86 @@
+<!doctype html>
+<!-- Shaped after the Marketplace create item form as open source automation describes it
+     (October 2026): labelled inputs inside <label aria-label>, a hidden file input, a Category
+     list without option roles, a Condition combobox with role=option entries, and div buttons. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Marketplace</title>
+<style>.hidden { display: none; } .list { max-height: 120px; overflow-y: auto; }</style>
+</head>
+<body>
+<div role="main">
+  <div id="form">
+    <h1>Item for sale</h1>
+    <div role="button" tabindex="0" aria-label="Add photos">Add photos</div>
+    <input class="x1s85apg" style="display: none" type="file" accept="image/*,image/heif,image/heic" multiple>
+    <label aria-label="Title" class="x78zum5"><span>Title</span><input id="title" type="text" class="x1i10hfl"></label>
+    <label aria-label="Price" class="x78zum5"><span>Price</span><input id="price" type="text"></label>
+    <label aria-label="Category" role="combobox" tabindex="0" id="category"><span id="category-value">Category</span></label>
+    <div id="category-list" class="list hidden"></div>
+    <label aria-label="Condition" role="combobox" tabindex="0" id="condition"><span id="condition-value">Condition</span></label>
+    <div id="condition-list" role="listbox" class="hidden">
+      <div role="option">New</div><div role="option">Used - Like New</div>
+      <div role="option">Used - Good</div><div role="option">Used - Fair</div>
+    </div>
+    <label aria-label="Description"><span>Description</span><textarea id="description"></textarea></label>
+    <div role="button" tabindex="0" aria-label="Next" aria-disabled="true" id="next"><span>Next</span></div>
+  </div>
+  <div id="review" class="hidden">
+    <h2>List in more places</h2>
+    <div role="button" tabindex="0" aria-label="Publish" id="publish"><span>Publish</span></div>
+  </div>
+</div>
+<script>
+  const state = {photos: 0, category: "", condition: ""};
+  const categories = ["Tools", "Furniture", "Household", "Garden", "Appliances", "Video Games",
+    "Books, Movies & Music", "Bags & Luggage", "Electronics & Computers", "Mobile Phones",
+    "Bicycles", "Arts & Crafts", "Sports & Outdoors", "Toys & Games", "Musical Instruments",
+    "Antiques & Collectibles", "Miscellaneous"];
+  const list = document.getElementById("category-list");
+  for (const name of categories) {
+    const entry = document.createElement("div");
+    entry.textContent = name;
+    entry.addEventListener("click", () => choose("category", name));
+    list.appendChild(entry);
+  }
+  for (const entry of document.querySelectorAll("#condition-list [role=option]")) {
+    entry.addEventListener("click", () => choose("condition", entry.textContent));
+  }
+  function choose(field, value) {
+    state[field] = value;
+    document.getElementById(field + "-value").textContent = value;
+    document.getElementById(field + "-list").classList.add("hidden");
+    refresh();
+  }
+  for (const field of ["category", "condition"]) {
+    document.getElementById(field).addEventListener("click",
+      () => document.getElementById(field + "-list").classList.remove("hidden"));
+  }
+  document.querySelector("input[type=file]").addEventListener("change", (event) => {
+    state.photos = event.target.files.length; refresh();
+  });
+  for (const id of ["title", "price", "description"]) {
+    document.getElementById(id).addEventListener("input", refresh);
+  }
+  function refresh() {
+    const ready = state.photos && state.category && state.condition
+      && document.getElementById("title").value && document.getElementById("price").value;
+    document.getElementById("next").setAttribute("aria-disabled", ready ? "false" : "true");
+  }
+  document.getElementById("next").addEventListener("click", () => {
+    if (document.getElementById("next").getAttribute("aria-disabled") === "true") return;
+    const listing = {
+      title: document.getElementById("title").value,
+      price: document.getElementById("price").value,
+      description: document.getElementById("description").value,
+      category: state.category, condition: state.condition, photos: state.photos,
+    };
+    sessionStorage.setItem("listing", JSON.stringify(listing));
+    document.getElementById("form").classList.add("hidden");
+    document.getElementById("review").classList.remove("hidden");
+  });
+  document.getElementById("publish").addEventListener("click", () => {
+    setTimeout(() => { location.href = "/marketplace/you/selling"; }, 300);
+  });
+</script>
+</body>
+</html>

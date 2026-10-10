@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}{{ view.item.title or view.item.hint or "Item" }}{% endblock %}
+{% block main %}
+{% include "_panel.html" %}
+{% endblock %}

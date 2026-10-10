@@ -1,0 +1,258 @@
+{
+  "login.form": {
+    "purpose": "the email or password field of the Facebook login form",
+    "heal": false,
+    "specs": [{"css": "input[name='email']"}, {"css": "input[name='pass']"}]
+  },
+  "page.blocked": {
+    "purpose": "a notice that the account may not use Marketplace or is blocked",
+    "heal": false,
+    "specs": [
+      {"text": "You can't use Marketplace"},
+      {"text": "You can’t use Marketplace"},
+      {"text": "You're temporarily blocked"},
+      {"text": "You’re temporarily blocked"}
+    ]
+  },
+  "page.pin_prompt": {
+    "purpose": "Messenger asking for the chat history PIN",
+    "heal": false,
+    "specs": [{"text": "Enter your PIN"}, {"text": "restore your chats"}]
+  },
+  "create.photos": {
+    "purpose": "the file input that takes photos on the create item form",
+    "specs": [
+      {"css": "input[type='file'][accept*='image']", "attached": true},
+      {"css": "input[type='file']", "attached": true}
+    ]
+  },
+  "create.title": {
+    "purpose": "the Title text input of the listing form",
+    "specs": [
+      {"label": "Title", "exact": true},
+      {"role": "textbox", "name": "Title", "exact": true},
+      {"css": "input[aria-label='Title']"},
+      {"placeholder": "What are you selling"}
+    ]
+  },
+  "create.price": {
+    "purpose": "the Price text input of the listing form",
+    "specs": [
+      {"label": "Price", "exact": true},
+      {"role": "textbox", "name": "Price", "exact": true},
+      {"css": "input[aria-label='Price']"}
+    ]
+  },
+  "create.category": {
+    "purpose": "the Category dropdown of the listing form",
+    "specs": [
+      {"role": "combobox", "name": "Category"},
+      {"label": "Category", "exact": true},
+      {"css": "[aria-label='Category']"}
+    ]
+  },
+  "create.condition": {
+    "purpose": "the Condition dropdown of the listing form",
+    "specs": [
+      {"role": "combobox", "name": "Condition"},
+      {"label": "Condition", "exact": true},
+      {"css": "[aria-label='Condition']"}
+    ]
+  },
+  "create.description": {
+    "purpose": "the Description text area of the listing form",
+    "specs": [
+      {"label": "Description", "exact": true},
+      {"role": "textbox", "name": "Description"},
+      {"css": "textarea[aria-label='Description']"},
+      {"placeholder": "Describe your item"}
+    ]
+  },
+  "create.next": {
+    "purpose": "the Next button at the bottom of the create item form",
+    "specs": [
+      {"role": "button", "name": "Next", "exact": true},
+      {"css": "[role='button'][aria-label='Next']"}
+    ]
+  },
+  "create.publish": {
+    "purpose": "the Publish button that posts the new listing",
+    "specs": [
+      {"role": "button", "name": "Publish", "exact": true},
+      {"css": "[role='button'][aria-label='Publish']"}
+    ]
+  },
+  "dialog.not_now": {
+    "purpose": "the Not now button of a prompt shown after publishing (boost, share)",
+    "heal": false,
+    "specs": [{"role": "button", "name": "Not now"}]
+  },
+  "edit.save": {
+    "purpose": "the button that saves changes on the edit listing form (Update or Save)",
+    "specs": [
+      {"role": "button", "name": "Update", "exact": true},
+      {"role": "button", "name": "Save", "exact": true},
+      {"css": "[role='button'][aria-label='Update']"}
+    ]
+  },
+  "item.gone": {
+    "purpose": "the notice that a listing no longer exists",
+    "heal": false,
+    "specs": [
+      {"text": "This listing isn't available"},
+      {"text": "This listing isn’t available"},
+      {"text": "This listing is no longer available"},
+      {"text": "This content isn't available"},
+      {"text": "This content isn’t available"},
+      {"text": "This page isn't available"},
+      {"text": "This page isn’t available"}
+    ]
+  },
+  "item.mark_sold": {
+    "purpose": "the Mark as sold button on the seller's own listing page",
+    "specs": [
+      {"role": "button", "name": "Mark as sold", "exact": true},
+      {"text": "Mark as sold", "exact": true}
+    ]
+  },
+  "item.mark_available": {
+    "purpose": "the button that puts a sold listing back on sale",
+    "heal": false,
+    "specs": [
+      {"role": "button", "name": "Mark as available"},
+      {"role": "button", "name": "Mark as in stock"},
+      {"text": "Mark as available"}
+    ]
+  },
+  "sold.confirm": {
+    "purpose": "a button that finishes the mark as sold dialog without naming a buyer",
+    "heal": false,
+    "specs": [
+      {"css": "[role='dialog'] [role='button']:has-text('Skip')"},
+      {"css": "[role='dialog'] [role='button']:has-text('Someone else')"},
+      {"css": "[role='dialog'] [role='button']:has-text('Mark as sold')"},
+      {"css": "[role='dialog'] [role='button']:has-text('Done')"}
+    ]
+  },
+  "item.more": {
+    "purpose": "the More options (three dots) button on the seller's own listing page",
+    "specs": [
+      {"role": "button", "name": "More options"},
+      {"role": "button", "name": "More", "exact": true},
+      {"css": "[role='button'][aria-label='More']"}
+    ]
+  },
+  "item.delete": {
+    "purpose": "the Delete listing entry of the listing's More options menu",
+    "specs": [
+      {"role": "menuitem", "name": "Delete listing"},
+      {"role": "menuitem", "name": "Delete"},
+      {"text": "Delete listing"}
+    ]
+  },
+  "delete.confirm": {
+    "purpose": "the Delete button that confirms deleting a listing",
+    "specs": [
+      {"css": "[role='dialog'] [role='button'][aria-label='Delete']"},
+      {"css": "[role='dialog'] [role='button']:has-text('Delete')"}
+    ]
+  },
+  "selling.card": {
+    "purpose": "one listing card on Your listings",
+    "heal": false,
+    "specs": [
+      {"css": "xpath=//a[contains(@href, '/marketplace/item/')]/ancestor::div[contains(., 'clicks on listing') or contains(., 'Mark as sold') or contains(., 'Mark as available')][1]"}
+    ]
+  },
+  "selling.item_link": {
+    "purpose": "the link to the listing inside a Your listings card",
+    "heal": false,
+    "specs": [{"css": "a[href*='/marketplace/item/']", "attached": true}]
+  },
+  "inbox.thread_list": {
+    "purpose": "the list of chats in Messenger",
+    "specs": [
+      {"role": "grid", "name": "Chats", "exact": true},
+      {"css": "[role='grid'][aria-label='Chats']"},
+      {"role": "navigation", "name": "Chats"}
+    ]
+  },
+  "inbox.marketplace_folder": {
+    "purpose": "the Marketplace row in the Messenger chat list that opens all Marketplace chats",
+    "specs": [
+      {"css": "[role='grid'][aria-label='Chats'] [role='row']:has-text('Marketplace') [role='button']"},
+      {"role": "row", "name": "Marketplace"},
+      {"role": "link", "name": "Marketplace"}
+    ]
+  },
+  "inbox.thread_link": {
+    "purpose": "a link to one Marketplace chat in the chat list",
+    "heal": false,
+    "specs": [
+      {"css": "[role='grid'] a[href*='/messages/t/']"},
+      {"css": "a[href*='/messages/t/']"}
+    ]
+  },
+  "inbox.unread": {
+    "purpose": "the unread marker inside a chat row",
+    "heal": false,
+    "specs": [{"css": "[aria-label*='nread']", "attached": true}, {"text": "Unread message"}]
+  },
+  "thread.message": {
+    "purpose": "one message bubble in an open chat",
+    "heal": false,
+    "specs": [
+      {"css": "[role='main'] [aria-label*='Message sent ']", "attached": true},
+      {"css": "[aria-label*='Message sent ']", "attached": true}
+    ]
+  },
+  "thread.heading": {
+    "purpose": "the heading of an open chat naming the buyer and the listing",
+    "heal": false,
+    "specs": [
+      {"css": "h3:has-text('Conversation titled')", "attached": true},
+      {"role": "heading", "name": "Conversation titled"}
+    ]
+  },
+  "thread.listing_link": {
+    "purpose": "the See details link from an open chat to its listing",
+    "heal": false,
+    "specs": [
+      {"css": "a[aria-label='See details'][href*='/marketplace/item/']", "attached": true},
+      {"css": "[role='main'] a[href*='/marketplace/item/']", "attached": true}
+    ]
+  },
+  "thread.buyer_link": {
+    "purpose": "the link to the buyer's profile in an open chat",
+    "heal": false,
+    "specs": [
+      {"css": "[role='main'] a[href*='/marketplace/profile/']", "attached": true},
+      {"css": "[role='main'] a[href*='profile.php?id=']", "attached": true}
+    ]
+  },
+  "thread.input": {
+    "purpose": "the message text box of an open chat",
+    "specs": [
+      {"role": "textbox", "name": "Message"},
+      {"css": "[role='textbox'][contenteditable='true']"},
+      {"label": "Message"}
+    ]
+  },
+  "thread.send": {
+    "purpose": "the send button of an open chat",
+    "heal": false,
+    "specs": [
+      {"role": "button", "name": "Press enter to send"},
+      {"role": "button", "name": "Send", "exact": true}
+    ]
+  },
+  "thread.rate_limited": {
+    "purpose": "a notice that Messenger blocked sending",
+    "heal": false,
+    "specs": [
+      {"text": "reached the messaging limit"},
+      {"text": "You can't send messages"},
+      {"text": "You can’t send messages"}
+    ]
+  }
+}

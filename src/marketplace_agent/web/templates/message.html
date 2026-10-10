@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block main %}
+<section class="box">
+  <p class="lead">{{ text }}</p>
+  <div class="row">
+    {% if status == 401 and request.method == "GET" %}
+    <a class="button primary" href="">Try again</a>
+    {% endif %}
+    <a class="button" href="/">All items</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,26 @@
+<!doctype html>
+<!-- Messenger on facebook.com: a "Chats" grid whose "Marketplace" row opens the Marketplace
+     folder. A personal chat sits in the main list and must never be opened. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Messenger</title><style>.hidden { display: none; }</style></head>
+<body>
+<div role="navigation" aria-label="Chats sidebar">
+  <div role="grid" aria-label="Chats">
+    <div role="row"><div role="button" tabindex="0" id="folder"><span>Marketplace</span><span>2 new</span></div></div>
+    <div role="row" id="personal"><a href="/messages/t/100/" role="link"><div>Mom</div><div>Mom: call me · 1h</div></a></div>
+    <div id="marketplace" class="hidden">
+      <div role="row"><a href="/messages/t/777/" role="link">
+        <div>Lucas · IKEA desk</div><div>Lucas: Would you take $100? · 2m</div>
+        <span aria-label="Unread message"></span>
+      </a></div>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById("folder").addEventListener("click", () => {
+    document.getElementById("personal").classList.add("hidden");
+    document.getElementById("marketplace").classList.remove("hidden");
+  });
+</script>
+</body>
+</html>

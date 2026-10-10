@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% macro item_cards(cards) %}
+<ul class="cards">
+  {% for card in cards %}
+  {% set item = card.item %}
+  <li class="card">
+    <a class="card-main" href="/items/{{ item.id }}">
+      {% if card.photo_id %}
+      <img class="thumb" src="/photos/{{ card.photo_id }}" alt="" loading="lazy">
+      {% else %}
+      <span class="thumb"></span>
+      {% endif %}
+      <span>
+        <span class="card-title">{{ item.title or item.hint or "Untitled item" }}</span>
+        {% if card.deal_cents %}
+        <span class="card-price">Promised at {{ card.deal_cents|money }}</span>
+        {% elif card.price_cents %}
+        <span class="card-price">{{ card.price_cents|money }}</span>
+        {% endif %}
+      </span>
+    </a>
+    {% if card.approvals or card.escalations or card.deal_cents or item.paused or card.listings %}
+    <p class="card-foot">
+      {% if card.deal_cents %}<span class="badge deal">Deal made</span>{% endif %}
+      {% if card.approvals %}<span class="badge warn">{{ card.approvals }} to approve</span>{% endif %}
+      {% if card.escalations %}<span class="badge warn">{{ card.escalations }} need{{ "" if card.escalations > 1 else "s" }} you</span>{% endif %}
+      {% if item.paused %}<span class="badge">Paused</span>{% endif %}
+      {% for listing in card.listings %}
+      {% set href = listing.url|web_url %}
+      {% if href %}
+      <a class="platform" href="{{ href }}" target="_blank" rel="noopener noreferrer">{{ listing.platform }}</a>
+      {% else %}
+      <span class="platform">{{ listing.platform }}</span>
+      {% endif %}
+      {% endfor %}
+    </p>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endmacro %}
+{% block main %}
+{% include "_attention.html" %}
+{% for status, cards in groups %}
+{% if status.value in ("sold", "withdrawn") %}
+<details class="group">
+  <summary><h2>{{ group_labels[status] }} <span class="count">{{ cards|length }}</span></h2></summary>
+  {{ item_cards(cards) }}
+</details>
+{% else %}
+<section class="group">
+  <h2>{{ group_labels[status] }} <span class="count">{{ cards|length }}</span></h2>
+  {{ item_cards(cards) }}
+</section>
+{% endif %}
+{% else %}
+<section class="box empty">
+  <p class="lead">Nothing for sale yet.</p>
+  <p>Tap New item, take a few photos, and type what it is.</p>
+</section>
+{% endfor %}
+{% endblock %}

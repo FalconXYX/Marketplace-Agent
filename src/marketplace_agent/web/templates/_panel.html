@@ -1,0 +1,24 @@
+{% from "_macros.html" import show_flash %}
+<section id="item" class="panel" hx-target="this" hx-swap="outerHTML">
+  {{ show_flash(flash, "top") }}
+  <header class="item-head">
+    <h1>{{ view.item.title or view.item.hint or "New item" }}</h1>
+    <p class="meta">
+      <span class="badge status-{{ view.item.status.value }}">{{ status_labels[view.item.status] }}</span>
+      {% if view.item.paused %}<span class="badge warn">Paused</span>{% endif %}
+      {% if view.goal %}<span class="price">{{ view.goal.list_price_cents|money }}</span>{% endif %}
+    </p>
+  </header>
+  {% if view.photos %}
+  <ul class="photos">
+    {% for photo in view.photos %}
+    <li><a href="/photos/{{ photo.id }}" target="_blank"><img src="/photos/{{ photo.id }}" alt="Photo {{ loop.index }}" width="{{ photo.width }}" height="{{ photo.height }}" loading="lazy"></a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if draft %}
+  {% include "_draft.html" %}
+  {% else %}
+  {% include "_listed.html" %}
+  {% endif %}
+</section>

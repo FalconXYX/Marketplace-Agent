@@ -1,0 +1,1 @@
+{"errors":[{"message":"Authentication failed for Query.conversations, request has no authorized user","locations":[{"line":2,"column":3}],"path":["conversations"],"extensions":{"silent":false,"statusCode":401,"code":"UNAUTHENTICATED","exception":{"statusCode":401}}}],"data":null}

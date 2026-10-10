@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<!-- Low confidence: legacy edit form, same field names as the post form. -->
+<html lang="en">
+<head><meta charset="UTF-8"/><title>Edit Ad | Kijiji</title></head>
+<body>
+<form id="PostAdMainForm" name="postAdForm" method="post" action="/p-submit-ad.html">
+  <input type="hidden" name="ca.kijiji.xsrf.token" value="fixture-form-xsrf"/>
+  <input type="hidden" name="postAdForm.adId" value="1744700001"/>
+  <input type="hidden" name="postAdForm.categoryId" value="239"/>
+  <input type="hidden" name="postAdForm.adType" value="OFFER"/>
+  <input id="postad-title" type="text" name="postAdForm.title" value="IKEA Malm desk, white"/>
+  <textarea id="pstad-descrptn" name="postAdForm.description">White Malm desk &amp; chair mat.</textarea>
+  <input type="radio" id="priceType1" name="postAdForm.priceType" value="FIXED" checked/>
+  <input type="radio" id="priceType3" name="postAdForm.priceType" value="CONTACT"/>
+  <input id="PriceAmount" type="text" name="postAdForm.priceAmount" value="120"/>
+  <select id="condition_s" name="postAdForm.attributeMap[condition_s]">
+    <option value="new">New</option>
+    <option value="usedgood" selected>Used - Good</option>
+  </select>
+  <input type="hidden" name="images" value="https://media.kijiji.ca/api/v1/ca-prod-fsbo-ads/images/aa/existing-photo"/>
+  <input type="text" name="postAdForm.postalCode" value="M6J 1Z1"/>
+  <button type="submit">Save changes</button>
+</form>
+</body>
+</html>

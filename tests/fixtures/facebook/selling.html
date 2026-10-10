@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- Your listings: one card per listing with its link, state, clicks, and Mark as sold.
+     The newest card repeats whatever the create form saved in sessionStorage. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Your listings</title></head>
+<body>
+<div role="main">
+  <h1>Your listings</h1>
+  <div id="cards">
+    <div class="x9f619">
+      <a href="/marketplace/item/1111/?ref=selling"><img alt="" src="data:,"></a>
+      <div><a href="/marketplace/item/1111/?ref=selling"><span>Old lamp</span></a></div>
+      <div><span>$15</span></div>
+      <div><span>Active · Listed on 9/1</span></div>
+      <div><span>7 clicks on listing</span></div>
+      <div role="button" tabindex="0"><span>Mark as sold</span></div>
+    </div>
+  </div>
+</div>
+<script>
+  const saved = JSON.parse(sessionStorage.getItem("listing") || "null");
+  if (saved) {
+    const card = document.createElement("div");
+    card.className = "x9f619";
+    card.innerHTML = '<a href="/marketplace/item/2222/?ref=selling"><span></span></a>'
+      + '<div><span class="price"></span></div><div><span>Active · Listed just now</span></div>'
+      + '<div><span>0 clicks on listing</span></div>'
+      + '<div role="button" tabindex="0"><span>Mark as sold</span></div>';
+    card.querySelector("a span").textContent = saved.title;
+    card.querySelector(".price").textContent = "$" + saved.price;
+    document.getElementById("cards").prepend(card);
+  }
+</script>
+</body>
+</html>

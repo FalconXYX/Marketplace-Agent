@@ -1,0 +1,114 @@
+# Marketplace Agent settings. Copy to marketplace_agent.toml (git ignored) and edit.
+# Priority: environment (MA_*) > .env > this file > defaults. Secrets go in .env.
+# Every value below is the default unless marked "example".
+
+timezone = "America/Toronto"            # IANA name; availability and digests use local time
+pickup_area = "Bloor St W & Ossington Ave"  # example. Cross street, shared with any buyer
+# pickup_address goes in .env (MA_PICKUP_ADDRESS); sent only after a confirmed deal
+
+# Where to sell: "kijiji", "facebook", or "fake" (in memory, posts nowhere: safe for trying
+# the web UI). Switch to ["kijiji"] or ["kijiji", "facebook"] once connected (see README).
+enabled_platforms = ["fake"]
+
+# data_dir = "data"                     # database, photos, Facebook profile
+
+# Guardrails
+undo_window_minutes = 10                # time you have to undo a deal the agent made
+trust_promote_after = 5                 # clean runs in a row before an action needs less approval
+approval_ttl_hours = 24                 # unanswered approval requests expire
+
+# Runner
+tick_seconds = 120                      # how often to check platforms
+idle_wake_days = 3.0                    # wake the agent on an item this long without activity
+stats_wake_view_delta = 25              # wake after this many new views
+no_show_grace_minutes = 30              # wait after a pickup ends before it counts as a no-show
+
+# Models. Gemini is the only provider with vision (photo drafting).
+vision_model = "gemini-flash-latest"
+reasoning_model = "gemini-flash-latest"
+cheap_model = "gemini-3.5-flash-lite"
+groq_model = "openai/gpt-oss-120b"                          # fallback, text only
+openrouter_model = "nvidia/nemotron-3-super-120b-a12b:free"  # fallback, text only
+quota_constrained_fraction = 0.25       # under this share of the daily budget left, wake only for messages, pickups, deadlines, your actions
+
+# Discord ids (token in .env). Turn on Developer Mode in Discord, then right click > Copy ID.
+# discord_channel_id = 123456789012345678
+# discord_owner_id = 123456789012345678
+discord_digest_hour = 20                # local hour for the daily digest
+
+# Kijiji (login in .env)
+# kijiji_location_id = 1700273          # example: City of Toronto
+# kijiji_postal_code = "A1A 1A1"        # example
+
+# Facebook (optional extra; see README)
+facebook_headless = false               # headed is safer: a visible, human-paced browser
+facebook_heal_budget_per_day = 5        # model calls per day to repair broken selectors
+facebook_action_delay_s = [1.5, 4.0]    # random pause between browser actions, seconds
+# facebook_profile_dir = "data/facebook_profile"
+
+# Web intake
+web_host = "127.0.0.1"                  # keep loopback; use `tailscale serve` for your phone
+web_port = 8765
+web_max_photos = 12
+web_max_photo_mb = 15
+
+# Pickup windows, local time. weekday: 0 = Monday ... 6 = Sunday.
+# Listing any window replaces all of the defaults below.
+[[availability]]
+weekday = 0
+start = "17:00"
+end = "20:00"
+
+[[availability]]
+weekday = 1
+start = "17:00"
+end = "20:00"
+
+[[availability]]
+weekday = 2
+start = "17:00"
+end = "20:00"
+
+[[availability]]
+weekday = 3
+start = "17:00"
+end = "20:00"
+
+[[availability]]
+weekday = 4
+start = "17:00"
+end = "20:00"
+
+[[availability]]
+weekday = 5
+start = "10:00"
+end = "18:00"
+
+[[availability]]
+weekday = 6
+start = "10:00"
+end = "18:00"
+
+# Daily caps per platform. List every platform: a missing one gets a cap of 0.
+[daily_outbound_cap]                    # messages to buyers
+fake = 1000
+kijiji = 60
+facebook = 40
+
+[daily_publish_cap]                     # new posts and reposts
+fake = 1000
+kijiji = 10
+facebook = 5                            # reported spam threshold is about 10 a day
+
+# Free tier request limits per provider. Edit if the provider changes them.
+[provider_limits.gemini]
+rpm = 10
+rpd = 250
+
+[provider_limits.groq]
+rpm = 30
+rpd = 1000
+
+[provider_limits.openrouter]
+rpm = 20
+rpd = 50

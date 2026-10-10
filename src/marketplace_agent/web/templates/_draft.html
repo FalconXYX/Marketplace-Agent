@@ -1,0 +1,123 @@
+{% from "_macros.html" import field %}
+<div id="draft" class="draft">
+{% if draft.auto %}
+  <div class="box drafting" hx-post="/items/{{ view.item.id }}/draft" hx-trigger="load" hx-target="#draft" hx-swap="outerHTML">
+    <p class="pulse">Writing the listing from your photos. This can take a few seconds.</p>
+    <noscript>
+      <form method="post" action="/items/{{ view.item.id }}/draft"><button type="submit">Draft it now</button></form>
+    </noscript>
+  </div>
+{% else %}
+  {% set f = draft.fields %}
+  {% set errors = draft.errors %}
+  {% if draft.note %}
+  <div class="flash error" role="alert" tabindex="-1" autofocus>
+    <p>{{ draft.note }}</p>
+    {% if draft.retry %}
+    <form method="post" action="/items/{{ view.item.id }}/draft" hx-post="/items/{{ view.item.id }}/draft" hx-target="#draft" hx-swap="outerHTML" hx-disabled-elt="find button">
+      <button type="submit">Try the draft again</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endif %}
+  {% if draft.suggestion %}
+  {% set low, high = draft.suggestion.suggested_price_low_cents, draft.suggestion.suggested_price_high_cents %}
+  <div class="box suggestion">
+    {% if low and high and low != high %}
+    <p><strong>Suggested price:</strong> {{ low|money }} to {{ high|money }}</p>
+    {% elif low or high %}
+    <p><strong>Suggested price:</strong> {{ (low or high)|money }}</p>
+    {% endif %}
+    {% if draft.suggestion.price_reasoning %}<p class="muted">{{ draft.suggestion.price_reasoning }}</p>{% endif %}
+    {% if draft.suggestion.uncertain %}
+    <p><strong>Check these, the model was not sure:</strong></p>
+    <ul>
+      {% for point in draft.suggestion.uncertain %}
+      <li>{{ point }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  {% endif %}
+  <form class="box" method="post" action="/items/{{ view.item.id }}/confirm" hx-post="/items/{{ view.item.id }}/confirm" hx-target="#item" hx-swap="outerHTML" hx-disabled-elt="find button[type=submit]">
+    {% if errors %}
+    <div class="flash error" role="alert" tabindex="-1" autofocus><p>Fix the marked fields, then confirm again.</p></div>
+    {% endif %}
+    {% call field("title", "Title", errors) %}
+    <input name="title" value="{{ f.title }}" maxlength="100" required>
+    {% endcall %}
+    <div class="pair">
+      {% call field("price", "Asking price ($)", errors) %}
+      <input name="price" value="{{ f.price }}" inputmode="decimal" placeholder="120" required>
+      {% endcall %}
+      {% call field("floor", "Lowest you take ($)", errors) %}
+      <input name="floor" value="{{ f.floor }}" inputmode="decimal" placeholder="90" required>
+      {% endcall %}
+    </div>
+    {% if draft.comps %}
+    {% set market = draft.comps.summary %}
+    <div class="comps muted" id="comps">
+      {% if market.count and market.median_cents is not none %}
+      <p><strong>Similar listings:</strong> {{ market.count }} for "{{ draft.comps.query }}", median {{ market.median_cents|money }}, middle half {{ market.p25_cents|money }} to {{ market.p75_cents|money }}. Other sellers' asking prices, searched {{ draft.comps.fetched_at|local }}.</p>
+      <ul class="details">
+        {% for sample in market.samples %}
+        {% set href = sample.get("url")|web_url %}
+        <li>{{ sample.price_cents|money }}: {% if href %}<a href="{{ href }}" target="_blank" rel="noopener noreferrer">{{ sample.get("title", "?") }}</a>{% else %}{{ sample.get("title", "?") }}{% endif %} ({{ sample.get("platform", "?") }})</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p><strong>Similar listings:</strong> none found for "{{ draft.comps.query }}", searched {{ draft.comps.fetched_at|local }}.</p>
+      {% endif %}
+      {% if market.skipped %}<p>Not searched: {{ market.skipped|join("; ") }}.</p>{% endif %}
+    </div>
+    {% endif %}
+    {% call field("description", "Description", errors) %}
+    <textarea name="description" rows="6">{{ f.description }}</textarea>
+    {% endcall %}
+    {% call field("condition", "Condition", errors) %}
+    <select name="condition">
+      <option value=""{% if not f.condition %} selected{% endif %}>Not sure</option>
+      {% for value, label in conditions %}
+      <option value="{{ value }}"{% if value == f.condition %} selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    {% endcall %}
+    {% set more = ("category", "attributes", "target", "firmness", "deadline_days", "notes") %}
+    <details class="more"{% if more|select("in", errors)|list %} open{% endif %}>
+      <summary>More options</summary>
+      {% call field("category", "Category", errors) %}
+      <input name="category" value="{{ f.category }}" placeholder="Furniture">
+      {% endcall %}
+      {% call field("attributes", "Details, one per line", errors) %}
+      <textarea name="attributes" rows="3" placeholder="Brand: IKEA">{{ f.attributes }}</textarea>
+      {% endcall %}
+      <div class="pair">
+        {% call field("target", "Hoping for ($)", errors) %}
+        <input name="target" value="{{ f.target }}" inputmode="decimal" placeholder="Same as asking">
+        {% endcall %}
+        {% call field("deadline_days", "Days to sell", errors) %}
+        <input name="deadline_days" value="{{ f.deadline_days }}" inputmode="numeric">
+        {% endcall %}
+      </div>
+      {% call field("firmness", "Haggling", errors) %}
+      <select name="firmness">
+        {% for value, label in firmness_levels %}
+        <option value="{{ value }}"{% if value == f.firmness %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      {% endcall %}
+      {% call field("notes", "Notes for the agent", errors) %}
+      <textarea name="notes" rows="2" placeholder="Pickup after 6pm only">{{ f.notes }}</textarea>
+      {% endcall %}
+    </details>
+    <fieldset class="platforms{{ ' invalid' if 'platforms' in errors else '' }}">
+      <legend>Post on</legend>
+      {% for name in enabled_platforms %}
+      <label class="check"><input type="checkbox" name="platforms" value="{{ name }}"{% if name in f.platforms %} checked{% endif %}> {{ name }}</label>
+      {% endfor %}
+      {% if 'platforms' in errors %}<span class="error-text">{{ errors['platforms'] }}</span>{% endif %}
+    </fieldset>
+    <button class="primary big" type="submit">Confirm and post</button>
+  </form>
+{% endif %}
+</div>

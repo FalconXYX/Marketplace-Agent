@@ -1,0 +1,29 @@
+{% macro show_flash(flash, anchor) %}
+{% if flash and flash.anchor == anchor %}
+<div class="flash {{ 'ok' if flash.ok else 'error' }}" role="{{ 'status' if flash.ok else 'alert' }}" tabindex="-1" autofocus>
+  <p>{{ flash.text }}</p>
+  {% if flash.details %}
+  <ul>
+    {% for line in flash.details %}
+    <li>{{ line }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endif %}
+{% endmacro %}
+
+{# A form that posts with htmx into the panel it sits in, and without JavaScript as a page. #}
+{% macro post(url, confirm="", cls="") %}
+<form method="post" action="{{ url }}" hx-post="{{ url }}" hx-disabled-elt="find button"{% if confirm %} hx-confirm="{{ confirm }}"{% endif %}{% if cls %} class="{{ cls }}"{% endif %}>
+{{ caller() }}
+</form>
+{% endmacro %}
+
+{% macro field(name, label, errors) %}
+<label class="field{{ ' invalid' if name in errors else '' }}">
+  <span>{{ label }}</span>
+  {{ caller() }}
+  {% if name in errors %}<span class="error-text">{{ errors[name] }}</span>{% endif %}
+</label>
+{% endmacro %}

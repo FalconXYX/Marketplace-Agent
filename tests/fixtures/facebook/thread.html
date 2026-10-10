@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- One Marketplace chat: heading, See details link, profile link, bubbles labelled
+     "Enter, Message sent <time> by <sender>: <text>", a contenteditable box, Enter sends. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Messenger</title></head>
+<body>
+<div role="main">
+  <h3>Conversation titled Lucas · IKEA desk</h3>
+  <a aria-label="See details" href="/marketplace/item/2222/">See details</a>
+  <a href="https://www.facebook.com/marketplace/profile/555/">Lucas</a>
+  <div id="bubbles">
+    <div role="row"><div aria-label="Enter, Message sent 9:00 AM by Lucas: Is this available?"><div dir="auto">Is this available?</div></div></div>
+    <div role="row"><div aria-label="Enter, Message sent 9:05 AM by You: Yes it is"><div dir="auto">Yes it is</div></div></div>
+    <div role="row"><div aria-label="Enter, Message sent 9:07 AM by Lucas: Would you take $100?"><div dir="auto">Would you take $100?</div></div></div>
+  </div>
+  <div role="textbox" contenteditable="true" aria-label="Message" id="box"></div>
+  <div role="button" tabindex="0" aria-label="Press enter to send" id="send">Send</div>
+</div>
+<script>
+  const box = document.getElementById("box");
+  function send() {
+    const text = box.innerText.trim();
+    if (!text) return;
+    const row = document.createElement("div");
+    row.setAttribute("role", "row");
+    const bubble = document.createElement("div");
+    bubble.setAttribute("aria-label", "Enter, Message sent 9:30 AM by You: " + text);
+    bubble.textContent = text;
+    row.appendChild(bubble);
+    document.getElementById("bubbles").appendChild(row);
+    box.innerHTML = "";
+  }
+  box.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); send(); }
+  });
+  document.getElementById("send").addEventListener("click", send);
+</script>
+</body>
+</html>

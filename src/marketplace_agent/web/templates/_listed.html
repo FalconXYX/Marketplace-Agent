@@ -1,0 +1,232 @@
+{% from "_macros.html" import show_flash, post %}
+{% set item = view.item %}
+{% if view.deal %}
+{% set deal = view.deal %}
+<section class="box deal" id="deal">
+  {% if deal.bundle %}
+  <h2>Promised to {{ deal.buyer }} in a bundle for {{ deal.total_cents|money }}</h2>
+  <p>This item {{ deal.price_cents|money }}, with {% for other in deal.partners %}<a href="/items/{{ other.id }}">{{ other.title }}</a> {{ other.price_cents|money }}{% if not loop.last %}, {% endif %}{% endfor %}. Every answer and Undo here covers the whole bundle.</p>
+  {% else %}
+  <h2>Promised to {{ deal.buyer }} for {{ deal.price_cents|money }}</h2>
+  {% endif %}
+  {% if deal.pickup_start %}
+  <p>Pickup {{ deal.pickup_start|local }}{% if deal.pickup_end %} to {{ deal.pickup_end|local }}{% endif %}</p>
+  {% else %}
+  <p class="muted">No pickup booked yet.</p>
+  {% endif %}
+  {{ show_flash(flash, "deal") }}
+  {% if deal.pickup_check %}
+  <p class="ask">Did {{ deal.buyer }} pick {{ "them" if deal.bundle else "it" }} up?</p>
+  <div class="row">
+    {% call post("/items/%d/sold"|format(item.id)) %}
+    <input type="hidden" name="anchor" value="deal">
+    <input type="hidden" name="check" value="{{ deal.pickup_check.id }}">
+    <button class="primary" type="submit">Picked up</button>
+    {% endcall %}
+    {% call post("/items/%d/noshow"|format(item.id)) %}
+    <input type="hidden" name="check" value="{{ deal.pickup_check.id }}">
+    <button type="submit">No-show</button>
+    {% endcall %}
+  </div>
+  {% endif %}
+  {% if deal.undo_until %}
+  {% call post("/commitments/%d/undo"|format(deal.id), confirm=("Undo this bundle deal? Every item in it goes back on sale." if deal.bundle else "Undo this deal? The item goes back on sale.")) %}
+  <button class="danger wide" type="submit">Undo deal (until {{ deal.undo_until|local }})</button>
+  {% endcall %}
+  {% endif %}
+</section>
+{% endif %}
+
+{% if view.approvals %}
+<section class="box" id="approvals">
+  <h2>Waiting for your OK</h2>
+  {% for entry in view.approvals %}
+  {% set approval = entry.approval %}
+  <article class="card" id="approval-{{ approval.id }}">
+    <h3>{{ approval.tool|replace("_", " ")|capitalize }}{% if approval.platform != "*" %} on {{ approval.platform }}{% endif %}</h3>
+    <ul class="details">
+      {% for line in entry.details %}
+      <li>{{ line }}</li>
+      {% endfor %}
+    </ul>
+    {% if approval.rationale %}<p class="muted">{{ approval.rationale }}</p>{% endif %}
+    {{ show_flash(flash, "approval-%d"|format(approval.id)) }}
+    <div class="row">
+      {% call post("/approvals/%d/approve"|format(approval.id)) %}
+      <button class="primary" type="submit">Approve</button>
+      {% endcall %}
+    </div>
+    {% call post("/approvals/%d/reject"|format(approval.id), cls="stack") %}
+    <input name="note" placeholder="Why not? The agent learns from it" aria-label="Why not">
+    <button type="submit">Reject</button>
+    {% endcall %}
+  </article>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if view.escalations %}
+<section class="box" id="escalations">
+  <h2>Questions for you</h2>
+  {% for escalation in view.escalations %}
+  <article class="card" id="escalation-{{ escalation.id }}">
+    <p>{{ escalation.reason }}</p>
+    <p class="muted small">{{ escalation.created_at|local }}</p>
+    {{ show_flash(flash, "escalation-%d"|format(escalation.id)) }}
+    {% call post("/escalations/%d/resolve"|format(escalation.id), cls="stack") %}
+    <textarea name="resolution" rows="2" placeholder="Your answer for the agent (optional)" aria-label="Your answer"></textarea>
+    <button type="submit">Resolve</button>
+    {% endcall %}
+    {% if escalation.thread_id in view.thread_ids and not view.closed %}
+    <a class="button wide" href="#thread-{{ escalation.thread_id }}">Reply as me</a>
+    {% endif %}
+  </article>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if view.threads %}
+<section class="box" id="threads">
+  <h2>Conversations</h2>
+  {% for entry in view.threads %}
+  {% set thread = entry.thread %}
+  <article class="card thread" id="thread-{{ thread.id }}">
+    <h3>{{ entry.buyer }} <span class="badge">{{ thread.state.value }}</span></h3>
+    {% if thread.frozen_reason %}<p class="error-text">Frozen: {{ thread.frozen_reason }}</p>{% endif %}
+    {% if entry.earlier %}<p class="muted small">{{ entry.earlier }} earlier message{{ "" if entry.earlier == 1 else "s" }} not shown</p>{% endif %}
+    <ol class="messages">
+      {% for message in entry.messages %}
+      <li class="msg {{ message.direction.value }}">
+        <p class="body">{{ message.body }}</p>
+        <p class="when">{{ message.sent_at|local }}{% if message.direction.value == "outbound" %}, {{ via_labels.get(message.via, message.via) }}{% endif %}</p>
+      </li>
+      {% endfor %}
+    </ol>
+    {{ show_flash(flash, "thread-%d"|format(thread.id)) }}
+    {% if view.closed %}
+    <p class="muted small">The item is {{ item.status.value }}, so nothing more is sent from here. Write to {{ entry.buyer }} in the {{ thread.platform }} app or site.</p>
+    {% else %}
+    {% call post("/threads/%d/reply"|format(thread.id), cls="stack") %}
+    <textarea name="body" rows="2" placeholder="Reply as you. [PICKUP_ADDRESS] shares the address." aria-label="Reply as you" required></textarea>
+    <button type="submit">Send as me</button>
+    {% endcall %}
+    {% endif %}
+  </article>
+  {% endfor %}
+</section>
+{% endif %}
+
+<section class="box" id="listings">
+  <h2>Listings</h2>
+  {% if view.listings %}
+  <ul class="rows">
+    {% for listing in view.listings %}
+    {% set href = listing.url|web_url %}
+    <li>
+      <span class="platform">{{ listing.platform }}</span>
+      <span class="badge">{{ listing.status.value|replace("_", " ") }}</span>
+      <span>{{ listing.price_cents|money }}</span>
+      {% if href %}<a href="{{ href }}" target="_blank" rel="noopener noreferrer">Open</a>{% endif %}
+      {% if listing.last_error %}<p class="error-text">{{ listing|listing_error }}</p>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">Not posted anywhere yet.</p>
+  {% endif %}
+</section>
+
+{% if view.on_sale %}
+<section class="box" id="controls">
+  <h2>Controls</h2>
+  {{ show_flash(flash, "controls") }}
+  {% if view.goal %}
+  {% call post("/items/%d/price"|format(item.id), cls="field-row") %}
+  <label class="field"><span>Asking price ($)</span><input name="price" value="{{ view.goal.list_price_cents|dollars }}" inputmode="decimal" required></label>
+  <button type="submit">Set</button>
+  {% endcall %}
+  {% call post("/items/%d/floor"|format(item.id), cls="field-row") %}
+  <label class="field"><span>Lowest you take ($)</span><input name="floor" value="{{ view.goal.floor_price_cents|dollars }}" inputmode="decimal" required></label>
+  <button type="submit">Set</button>
+  {% endcall %}
+  {% call post("/items/%d/firmness"|format(item.id), cls="field-row") %}
+  <label class="field"><span>Haggling</span>
+    <select name="firmness">
+      {% for value, label in firmness_levels %}
+      <option value="{{ value }}"{% if value == view.goal.firmness.value %} selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button type="submit">Set</button>
+  {% endcall %}
+  {% endif %}
+  {% call post("/items/%d/condition"|format(item.id), cls="field-row") %}
+  <label class="field"><span>Condition</span>
+    <select name="condition">
+      {% if not item.condition %}<option value="" selected disabled>Not set</option>{% endif %}
+      {% for value, label in conditions %}
+      <option value="{{ value }}"{% if value == item.condition %} selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button type="submit">Set</button>
+  {% endcall %}
+  {% if item.paused %}
+  {% call post("/items/%d/resume"|format(item.id)) %}
+  <button class="wide" type="submit">Resume the agent</button>
+  {% endcall %}
+  {% else %}
+  {% call post("/items/%d/pause"|format(item.id)) %}
+  <button class="wide" type="submit">Pause the agent</button>
+  {% endcall %}
+  {% endif %}
+  {% call post("/items/%d/sold"|format(item.id), confirm="Mark it sold and take every listing down?", cls="field-row") %}
+  <label class="field"><span>Sold for ($, optional)</span><input name="price" inputmode="decimal"></label>
+  <button class="primary" type="submit">Mark sold</button>
+  {% endcall %}
+  {% call post("/items/%d/withdraw"|format(item.id), confirm="Take it off the market? Any deal is cancelled.") %}
+  <button class="danger wide" type="submit">Withdraw</button>
+  {% endcall %}
+</section>
+{% endif %}
+
+{% if view.runs %}
+<section class="box" id="runs">
+  <h2>What the agent did</h2>
+  {% for run in view.runs %}
+  <article class="run">
+    <p class="small"><strong>{{ run.started_at|local }}</strong></p>
+    {% if run.triggers %}
+    <p class="muted small">Woke for:
+      {% for trigger in run.triggers %}{{ trigger }}{{ "; " if not loop.last else "" }}{% endfor %}
+    </p>
+    {% endif %}
+    {% if run.rationale %}<p>{{ run.rationale }}</p>{% endif %}
+    {% if run.outcomes %}
+    <ul class="details">
+      {% for outcome in run.outcomes %}
+      <li>{{ outcome }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% if run.error %}<p class="error-text">{{ run.error }}</p>{% endif %}
+  </article>
+  {% endfor %}
+</section>
+{% endif %}
+
+<details class="box">
+  <summary>Listing text</summary>
+  <p class="body">{{ item.description or "No description." }}</p>
+  {% if view.attributes %}
+  <ul class="details">
+    {% for name, value in view.attributes.items() %}
+    <li>{{ name }}: {{ value }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if item.condition %}<p>Condition: {{ item.condition|replace("_", " ") }}</p>{% endif %}
+  {% if view.goal %}
+  <p class="muted">Floor {{ view.goal.floor_price_cents|money }}, hoping for {{ view.goal.target_price_cents|money }}, by {{ view.goal.deadline|local }}.</p>
+  {% endif %}
+</details>

@@ -1,0 +1,70 @@
+[project]
+name = "marketplace-agent"
+version = "0.1.0"
+description = "Autonomous AI agent that sells your stuff on Kijiji and Facebook Marketplace"
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "Marketplace Agent contributors" }]
+requires-python = ">=3.12"
+keywords = ["agent", "llm", "marketplace", "kijiji", "facebook-marketplace", "gemini"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: End Users/Desktop",
+    "Natural Language :: English",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business",
+]
+dependencies = [
+    "sqlmodel>=0.0.22",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "typer>=0.12",
+    "pillow>=10.4",
+    "google-genai>=1.0",
+    "httpx>=0.27",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "jinja2>=3.1",
+    "python-multipart>=0.0.9",
+    "discord.py>=2.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/OWNER/marketplace-agent"
+Source = "https://github.com/OWNER/marketplace-agent"
+Issues = "https://github.com/OWNER/marketplace-agent/issues"
+
+[project.optional-dependencies]
+facebook = ["playwright>=1.47"]
+
+[project.scripts]
+agent = "marketplace_agent.cli:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "hypothesis>=6.100",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/marketplace_agent"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-q"
+markers = [
+    "live: hits a real external service; skipped unless MA_LIVE_TESTS=1",
+]

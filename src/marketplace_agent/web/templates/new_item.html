@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}New item{% endblock %}
+{% block main %}
+<form class="stack" method="post" action="/items" enctype="multipart/form-data" data-photo-form data-max-photos="{{ max_photos }}" data-max-mb="{{ max_photo_mb }}">
+  <h1>New item</h1>
+  {% if error %}
+  <div class="flash error" role="alert" tabindex="-1" autofocus><p>{{ error }}</p></div>
+  {% endif %}
+  <div class="pickers">
+    <label class="button primary big">Take photos
+      <input class="sr" type="file" name="photos" accept="image/*" capture="environment" multiple data-picker>
+    </label>
+    <label class="button big">Choose from library
+      <input class="sr" type="file" name="photos" accept="image/*" multiple data-picker>
+    </label>
+  </div>
+  <ul class="previews" data-previews></ul>
+  <p class="muted" data-photo-note aria-live="polite">Up to {{ max_photos }} photos, each under {{ max_photo_mb }} MB.</p>
+  <label class="field">
+    <span>What is it? Add a price if you have one.</span>
+    <input name="hint" value="{{ hint }}" placeholder="IKEA desk $120" maxlength="500" autocomplete="off" enterkeyhint="done">
+  </label>
+  <button class="primary big" type="submit" data-submit>Create</button>
+</form>
+{% endblock %}

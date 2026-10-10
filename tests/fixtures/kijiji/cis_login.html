@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><title>Kijiji - Sign In</title></head>
+<body>
+<main>
+  <h1>Sign in</h1>
+  <form id="login" method="post" action="login">
+    <input type="hidden" name="execution" value="fixture-execution-token"/>
+    <input type="hidden" name="service" value="https://id.kijiji.ca/oauth2.0/callbackAuthorize?client_id=kijiji_horizontal_web_gpmPihV3&amp;redirect_uri=https%3A%2F%2Fwww.kijiji.ca%2Fapi%2Fauth%2Fcallback%2Fcis&amp;response_type=code&amp;client_name=CasOAuthClient"/>
+    <input type="hidden" name="state" value="fixture-state"/>
+    <input type="hidden" name="nonce" value=""/>
+    <input type="hidden" name="locale" value=""/>
+    <input type="hidden" name="kc_locale" value=""/>
+    <input type="hidden" name="scope" value="openid email profile"/>
+    <input type="hidden" name="tmSessionId" value="c16118e5-a6a5-4381-aea5-5df0ced80a99"/>
+    <input type="hidden" name="_eventId" value="submit"/>
+    <input type="hidden" name="geolocation"/>
+    <label for="username">Email Address</label>
+    <input id="username" type="email" name="username" value="" accesskey="u" tabindex="1" required="true" spellcheck="false" autocomplete="username email" autocorrect="off" autofocus="true">
+    <label for="password">Password</label>
+    <input type="password" name="password" tabindex="3" accesskey="p" autocomplete="current-password" required="true" spellcheck="false" autocorrect="off" id="password" value="">
+    <input class="adaptive-checkbox" type="checkbox" name="trustThisDevice" id="trustThisDevice">
+    <label for="trustThisDevice">Trust this device</label>
+    <button id="login-submit" tabindex="3" type="submit" accesskey="l">Sign in</button>
+  </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{#- htmx 2.0.11, vendored at static/htmx.min.js from
+    https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js
+    (npm htmx.org@2.0.11, sha256 d6fdc75f204e6bdefa99b69bf1e6d4ac69b8a364f77929f45c13476b4000f717).
+    To upgrade, download another pinned version over that file and update this note. -#}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="htmx-config" content='{"includeIndicatorStyles": false, "allowEval": false, "responseHandling": [{"code": "204", "swap": false}, {"code": "[234]..", "swap": true}, {"code": "...", "swap": false, "error": true}]}'>
+<title>{% block title %}Marketplace Agent{% endblock %}</title>
+<link rel="stylesheet" href="/static/app.css">
+<script src="/static/htmx.min.js" defer></script>
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="/">Marketplace Agent</a>
+  <a class="button primary" href="/items/new">New item</a>
+</header>
+<main>
+<div id="toast" aria-live="polite"></div>
+{% block main %}{% endblock %}
+</main>
+</body>
+</html>

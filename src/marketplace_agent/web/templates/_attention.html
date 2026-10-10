@@ -1,0 +1,17 @@
+{% from "_macros.html" import show_flash, post %}
+<section id="attention" hx-target="this" hx-swap="outerHTML">
+  {% if flash %}{{ show_flash(flash, flash.anchor) }}{% endif %}
+  {% if loose %}
+  <h2>Needs you</h2>
+  {% for escalation in loose %}
+  <article class="card" id="escalation-{{ escalation.id }}">
+    <p>{{ escalation.reason }}</p>
+    <p class="muted small">{{ escalation.created_at|local }}</p>
+    {% call post("/escalations/%d/resolve"|format(escalation.id), cls="stack") %}
+    <textarea name="resolution" rows="2" placeholder="Your answer for the agent (optional)" aria-label="Your answer"></textarea>
+    <button type="submit">Resolve</button>
+    {% endcall %}
+  </article>
+  {% endfor %}
+  {% endif %}
+</section>

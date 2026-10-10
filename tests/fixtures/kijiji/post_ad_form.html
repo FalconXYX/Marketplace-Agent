@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!-- Low confidence: legacy form rebuilt from documented field names (eSelling 2026, kijiji-bot 2020). -->
+<html lang="en">
+<head><meta charset="UTF-8"/><title>Post Ad | Kijiji</title></head>
+<body>
+<form id="PostAdMainForm" name="postAdForm" method="post" action="/p-submit-ad.html">
+  <input type="hidden" name="ca.kijiji.xsrf.token" value="fixture-form-xsrf"/>
+  <input type="hidden" name="postAdForm.fraudToken" value="fixture-fraud-token"/>
+  <input type="hidden" name="postAdForm.categoryId" value="239"/>
+  <input type="hidden" name="postAdForm.adType" value="OFFER"/>
+  <label for="postad-title">Ad title</label>
+  <input id="postad-title" type="text" name="postAdForm.title" value="" maxlength="64"/>
+  <label for="pstad-descrptn">Description</label>
+  <textarea id="pstad-descrptn" name="postAdForm.description"></textarea>
+  <input type="radio" id="priceType1" name="postAdForm.priceType" value="FIXED"/>
+  <input type="radio" id="priceType2" name="postAdForm.priceType" value="GIVE_AWAY"/>
+  <input type="radio" id="priceType3" name="postAdForm.priceType" value="CONTACT" checked/>
+  <input type="radio" id="priceType4" name="postAdForm.priceType" value="SWAP_TRADE"/>
+  <input id="PriceAmount" type="text" name="postAdForm.priceAmount" value=""/>
+  <select id="condition_s" name="postAdForm.attributeMap[condition_s]">
+    <option value="">Select</option>
+    <option value="new">New</option>
+    <option value="usedlikenew">Used - Like new</option>
+    <option value="usedgood">Used - Good</option>
+    <option value="usedfair">Used - Fair</option>
+  </select>
+  <input type="radio" name="postAdForm.attributeMap[forsaleby_s]" value="ownr"/>
+  <input type="radio" name="postAdForm.attributeMap[forsaleby_s]" value="delr"/>
+  <div id="FileInputWrapper"><input type="file" name="file" multiple accept="image/*"/></div>
+  <input type="hidden" name="images" value=""/>
+  <input type="text" name="postAdForm.postalCode" value=""/>
+  <input type="hidden" name="postAdForm.locationId" value=""/>
+  <input type="radio" name="featuresForm.featurePackage" value="PKG_BASIC" checked/>
+  <input type="checkbox" name="postAdForm.confirmedTerms" value="true"/>
+  <button type="submit" name="submitType" value="saveAndCheckout" data-testid="checkout-post-btn">Post Your Ad</button>
+</form>
+</body>
+</html>
